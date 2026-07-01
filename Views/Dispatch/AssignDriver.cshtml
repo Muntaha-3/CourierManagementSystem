@@ -1,0 +1,63 @@
+﻿@model CourierManagementSystem.Models.Parcel
+@{
+    Layout = "_Layout";
+}
+
+
+<div class="row justify-content-center mt-5 animate__animated animate__zoomIn">
+    <div class="col-md-5">
+        <div class="glass-card p-5 shadow-lg border-top border-primary border-5 bg-white rounded-4">
+            <div class="text-center mb-4">
+                <h3 class="fw-bold text-primary">Dispatch Assignment</h3>
+                @* Shows the route clearly *@
+                <p class="text-muted small">Route: @Model.CurrentLocation <i class="fas fa-arrow-right mx-2"></i> @Model.ReceiverCity</p>
+            </div>
+
+
+            <div class="p-3 bg-light rounded-3 mb-4 border">
+                <div class="d-flex justify-content-between mb-1">
+                    <small class="text-muted fw-bold">Consignment #</small>
+                    <small class="text-muted fw-bold">Destination</small>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold text-dark">@Model.TrackingNumber</h5>
+                    @* THE FIX: Shows Name and Country together *@
+                    <div class="text-end">
+                        <h5 class="mb-0 fw-bold text-success">@Model.ReceiverName</h5>
+                        <span class="badge bg-soft-success text-success border border-success rounded-pill" style="font-size: 0.7rem;">
+                            <i class="fas fa-globe-asia me-1"></i> @Model.ReceiverCountry
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+
+            <form asp-action="AssignDriver" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="parcelId" value="@Model.Id" />
+
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-dark"><i class="fas fa-id-badge me-2 text-primary"></i>Select Available Rider</label>
+                    <select name="driverId" class="form-select rounded-pill border-primary p-3 shadow-sm" required>
+                        <option value="">-- Choose Verified Driver --</option>
+                        @foreach (var d in (List<CourierManagementSystem.Models.Employee>)ViewBag.Drivers)
+                        {
+                            <option value="@d.Id">@d.Name | @d.AssignedArea (@d.VehicleType)</option>
+                        }
+                    </select>
+                </div>
+
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary btn-lg rounded-pill fw-bold shadow">
+                        DISPATCH NOW <i class="fas fa-paper-plane ms-2"></i>
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-light text-dark rounded-pill border py-2">
+                        <i class="fas fa-times me-1"></i> Cancel & Go Back
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

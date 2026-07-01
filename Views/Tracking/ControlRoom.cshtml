@@ -1,0 +1,140 @@
+﻿/
+ControlRoom (1)
+cshtml
+@model IEnumerable<CourierManagementSystem.Models.Parcel>
+﻿
+    @{
+        ViewData["Title"] = "Tracking Control Room";
+    }
+    ﻿
+        <style>
+            body {
+                font-family: 'Poppins', sans-serif;
+                background-color: #f4f7f6;
+            }
+
+
+            .control-card {
+                background: white;
+                border-radius: 15px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+                padding: 30px;
+                margin-top: 30px;
+            }
+
+
+            .control-header {
+                background: linear-gradient(135deg, #0dcaf0 0%, #0aa2c0 100%);
+                color: white;
+                padding: 20px;
+                border-radius: 12px;
+                margin-bottom: 25px;
+            }
+
+
+            .status-badge {
+                padding: 6px 12px;
+                border-radius: 30px;
+                font-weight: bold;
+                font-size: 0.85rem;
+            }
+        </style>
+        ﻿
+            <div class="container animate__animated animate__fadeIn">
+                ﻿
+                    <div class="mb-3">
+                        <a href="/Dashboard/Index" class="btn btn-secondary rounded-pill px-4 shadow-sm">
+                            <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+                        </a>
+                    </div>
+                    ﻿
+                        <div class="control-card">
+                            ﻿
+                                <div class="control-header d-flex align-items-center">
+                                    <div class="me-3">
+                                        <i class="fas fa-map-marked-alt fa-2x text-white"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="fw-bold mb-0">Live Tracking Control Room</h4>
+                                        <small class="text-white-50">Monitor real-time transit status and parcel logistics</small>
+                                    </div>
+                                </div>
+                                ﻿
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle">
+                                            <thead class="table-dark">
+                                                <tr>
+                                                    <th>Parcel ID</th>         @* PK of Parcels table *@
+                                                    <th>Tracking Number</th>   @* string field on same Parcels row *@
+                                                    <th>Sender Name</th>
+                                                    <th>Receiver Name</th>
+                                                    <th>Current Hub Location</th>
+                                                    <th>Booked On</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in Model)
+                                                {
+                                                    <tr>
+                                                        ﻿
+                                                        @* Parcel ID — PK *@
+                                                        <td>
+                                                            <span class="badge bg-primary rounded-pill px-3 py-2">#@item.Id</span>
+                                                        </td>
+                                                        ﻿
+                                                        @* Tracking Number — unique string generated at booking *@
+                                                        <td class="fw-bold">
+                                                            <code class="text-info">@item.TrackingNumber</code>
+                                                        </td>
+                                                        ﻿
+                                                        <td>@item.Sender?.Name</td>
+                                                        <td>@item.ReceiverName</td>
+                                                        ﻿
+                                                            <td>
+                                                                <i class="fas fa-map-marker-alt text-danger me-1"></i>
+                                                                @(string.IsNullOrEmpty(item.CurrentLocation) ? "Origin Hub" : item.CurrentLocation)
+                                                            </td>
+                                                            ﻿
+                                                                <td>
+                                                                    <small class="text-muted">@item.BookingDate.ToString("dd MMM yyyy")</small>
+                                                                </td>
+                                                                ﻿
+                                                                    <td>
+                                                                        @{
+                                                                            var badgeColor = item.Status switch
+                                                                            {
+                                                                                CourierManagementSystem.Models.ParcelStatus.Delivered => "bg-success",
+                                                                                CourierManagementSystem.Models.ParcelStatus.OutForDelivery => "bg-primary",
+                                                                                CourierManagementSystem.Models.ParcelStatus.InTransit => "bg-info",
+                                                                                CourierManagementSystem.Models.ParcelStatus.ArrivedAtHub => "bg-warning text-dark",
+                                                                                _ => "bg-secondary"
+                                                                            };
+                                                                        }
+                                                                        <span class="status-badge @badgeColor text-white">@item.Status</span>
+                                                                    </td>
+                                                                ﻿
+                                                            </tr>
+                                                        }
+                                                        @if (!Model.Any())
+                                                        {
+                                                            <tr>
+                                                                <td colspan="7" class="text-center py-5 text-muted">No active shipments.</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            ﻿
+                                            @* ── KEY LEGEND *@
+                                            <div class="mt-3 d-flex gap-3">
+                                                <small class="text-muted">
+                                                    <span class="badge bg-primary rounded-pill">#</span> Parcel ID = PK (Parcels table)
+                                                </small>
+                                                <small class="text-muted">
+                                                    <code class="text-info">TRK-XXXX</code> = Tracking Number (same row, searchable by customer)
+                                                </small>
+                                            </div>
+                                        ﻿
+                                    </div>
+                                </div>

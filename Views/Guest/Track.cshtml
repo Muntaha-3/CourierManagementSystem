@@ -1,0 +1,258 @@
+﻿@model CourierManagementSystem.Models.Parcel
+@{
+    Layout = "_Layout";
+}
+
+
+<style>
+    /* Hero Section Background */
+    .hero-section {
+        background: linear-gradient(rgba(30, 60, 114, 0.8), rgba(42, 82, 152, 0.8)), url('https://media.istockphoto.com/id/155439315/photo/passenger-airplane-flying-above-clouds-during-sunset.jpg?s=612x612&w=0&k=20&c=LJWadbs3B-jSGJBVy9s0f8gZMHi2NvWFXa3VJ2lFcL0=');
+        background-size: cover;
+        background-position: center;
+        padding: 80px 0;
+        border-radius: 0 0 50px 50px;
+        color: white;
+        margin-top: -24px; /* Align with navbar */
+    }
+
+
+    .track-input-group {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+        padding: 10px;
+        border-radius: 50px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    }
+
+
+        .track-input-group input {
+            border: none;
+            padding-left: 25px;
+            font-size: 1.1rem;
+        }
+
+
+            .track-input-group input:focus {
+                box-shadow: none;
+            }
+
+
+    .service-card {
+        border: none;
+        border-radius: 20px;
+        transition: 0.3s;
+        background: #fdfdfd;
+    }
+
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+
+    .contact-footer {
+        background: #212529;
+        color: #adb5bd;
+        padding: 60px 0 30px;
+        border-radius: 50px 50px 0 0;
+        margin-top: 80px;
+    }
+
+
+    .status-dot {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #dee2e6;
+        display: inline-block;
+    }
+
+    .status-active {
+        background: #10b981;
+        box-shadow: 0 0 10px #10b981;
+    }
+
+    .line-step {
+        height: 3px;
+        background: #dee2e6;
+        flex-grow: 1;
+        margin: 0 10px;
+    }
+
+    .line-active {
+        background: #10b981;
+    }
+</style>
+
+
+<!-- 1. HERO SECTION -->
+<div class="hero-section text-center animate__animated animate__fadeIn">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3">Reliable Shipping, <span class="text-warning">Global Reach</span></h1>
+        <p class="lead mb-5 opacity-75">Track your consignments in real-time across Pakistan.</p>
+
+
+        <!-- Search Box -->
+        <form asp-action="Track" method="post" class="animate__animated animate__zoomIn animate__delay-1s">
+            <div class="track-input-group d-flex align-items-center">
+                <i class="fas fa-search-location text-primary ms-3 fs-4"></i>
+                <input type="text" name="trackingId" class="form-control rounded-pill" placeholder="Enter Tracking ID (e.g. TRK-12345678)" required />
+                <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold py-3">TRACK NOW</button>
+            </div>
+            @if (ViewBag.Error != null)
+            {
+                <div class="badge bg-danger mt-3 p-2 animate__animated animate__shakeX">@ViewBag.Error</div>
+            }
+        </form>
+    </div>
+</div>
+
+
+<!-- 2. TRACKING RESULT SECTION -->
+<div class="container mt-n5" style="position: relative; z-index: 10;">
+    @if (Model != null)
+    {
+        <div class="row justify-content-center">
+            <div class="col-md-10 col-lg-8">
+                <div class="glass-card p-5 animate__animated animate__fadeInUp border-0 shadow-lg mt-4" style="background:white; border-radius: 25px;">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <span class="badge bg-soft-success text-success px-3 py-2 rounded-pill mb-2"><i class="fas fa-check-circle me-1"></i> Parcel Located</span>
+                            <h2 class="fw-bold mb-0">@Model.TrackingNumber</h2>
+                        </div>
+                        <div class="text-end">
+                            <p class="text-muted small mb-0">Current Facility</p>
+                            <h5 class="fw-bold text-dark"><i class="fas fa-map-marker-alt text-danger me-2"></i>@Model.CurrentLocation</h5>
+                        </div>
+                    </div>
+
+
+                    <!-- PROGRESS BAR -->
+                    <div class="d-flex align-items-center mb-5 px-3 py-4 bg-light rounded-4">
+                        <div class="text-center">
+                            <div class="status-dot status-active"></div>
+                            <div class="small fw-bold mt-1">Booked</div>
+                        </div>
+                        <div class="line-step @(Model.Status != ParcelStatus.Booked ? "line-active" : "")"></div>
+                        <div class="text-center">
+                            <div class="status-dot @(Model.Status != ParcelStatus.Booked ? "status-active" : "")"></div>
+                            <div class="small fw-bold mt-1 text-nowrap">In-Transit</div>
+                        </div>
+                        <div class="line-step @(Model.Status == ParcelStatus.Delivered ? "line-active" : "")"></div>
+                        <div class="text-center">
+                            <div class="status-dot @(Model.Status == ParcelStatus.Delivered ? "status-active" : "")"></div>
+                            <div class="small fw-bold mt-1">Delivered</div>
+                        </div>
+                    </div>
+
+
+                    <div class="row g-4 mt-2">
+                        <div class="col-6 col-md-4">
+                            <p class="text-muted small mb-1">Recipient</p>
+                            <h6 class="fw-bold">@Model.ReceiverName</h6>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <p class="text-muted small mb-1">Destination</p>
+                            <h6 class="fw-bold text-truncate">@Model.ReceiverAddress</h6>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <p class="text-muted small mb-1">Latest Status</p>
+                            <h4 class="fw-bold text-success mb-0">@Model.Status</h4>
+                            <small class="text-muted">Updated: @DateTime.Now.ToString("dd MMM, hh:mm tt")</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+<!-- 3. SERVICES SECTION (Adding Content) -->
+<div class="container mt-5 py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">Why Choose CourierPro?</h2>
+        <p class="text-muted">Industry leading delivery solutions for your business and personal needs.</p>
+    </div>
+    <div class="row g-4 text-center">
+        <div class="col-md-4">
+            <div class="card service-card p-4 h-100 shadow-sm">
+                <div class="mb-3 text-primary"><i class="fas fa-bolt fa-3x"></i></div>
+                <h5 class="fw-bold">Fastest Delivery</h5>
+                <p class="small text-muted">Overnight and Express shipping across all major cities.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card service-card p-4 h-100 shadow-sm">
+                <div class="mb-3 text-success"><i class="fas fa-shield-alt fa-3x"></i></div>
+                <h5 class="fw-bold">Secure Handling</h5>
+                <p class="small text-muted">Every consignment is handled with the utmost care and safety.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card service-card p-4 h-100 shadow-sm">
+                <div class="mb-3 text-warning"><i class="fas fa-headset fa-3x"></i></div>
+                <h5 class="fw-bold">24/7 Support</h5>
+                <p class="small text-muted">Our support team is always here to help you track and manage shipments.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 4. CONTACT FOOTER -->
+<footer class="contact-footer">
+    <div class="container">
+        <div class="row g-5">
+            <div class="col-lg-4 col-md-6">
+                <h4 class="text-white fw-bold mb-4"><i class="fas fa-shipping-fast text-warning me-2"></i>COURIER<span class="text-warning">PRO</span></h4>
+                <p class="small">CourierPro is Pakistan's premium logistics partner, providing seamless and professional delivery services nationwide.</p>
+                <div class="d-flex gap-3 mt-4">
+                    <a href="#" class="text-white-50"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="text-white-50"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-white-50"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <h5 class="text-white fw-bold mb-4">Quick Links</h5>
+                <ul class="list-unstyled small">
+                    <li class="mb-2"><a href="#" class="text-decoration-none text-reset">Terms of Service</a></li>
+                    <li class="mb-2"><a href="#" class="text-decoration-none text-reset">Privacy Policy</a></li>
+                    <li class="mb-2"><a href="#" class="text-decoration-none text-reset">Prohibited Items</a></li>
+                    <li class="mb-2"><a href="#" class="text-decoration-none text-reset">Calculate Rates</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-4">
+                <h5 class="text-white fw-bold mb-4">Contact Information</h5>
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-primary text-white rounded-circle p-2 me-3"><i class="fas fa-phone-alt"></i></div>
+                    <div>
+                        <small class="d-block text-white-50">Helpline</small>
+                        <span class="text-white">+92 300 1234567</span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-success text-white rounded-circle p-2 me-3"><i class="fas fa-envelope"></i></div>
+                    <div>
+                        <small class="d-block text-white-50">Email Support</small>
+                        <span class="text-white">support@courierpro.com</span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="bg-warning text-white rounded-circle p-2 me-3"><i class="fas fa-map-marker-alt"></i></div>
+                    <div>
+                        <small class="d-block text-white-50">Head Office</small>
+                        <span class="text-white">Blue Area, Islamabad, Pakistan</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr class="mt-5 border-secondary opacity-25">
+        <div class="text-center small text-white-50 pt-3">
+            © 2026 MASH Group - Developed as part of Courier Management System.
+        </div>
+    </div>
+</footer>

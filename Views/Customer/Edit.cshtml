@@ -1,0 +1,57 @@
+﻿@model CourierManagementSystem.Models.Customer
+@{
+    Layout = "_Layout";
+}
+
+
+<div class="row justify-content-center animate__animated animate__zoomIn mt-5">
+    <div class="col-md-5">
+        <div class="glass-card p-5 shadow-lg">
+            <h3 class="fw-bold text-primary mb-4 text-center"><i class="fas fa-user-edit me-2"></i>Update Customer</h3>
+
+
+            <form asp-action="Edit" method="post">
+                <input type="hidden" asp-for="Id" />
+
+
+                <div class="mb-3">
+                    <label class="fw-bold">Full Name</label>
+                    <input asp-for="Name" class="form-control rounded-pill" required />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+
+
+                <div class="mb-3">
+                    <label class="fw-bold">Email Address</label>
+                    <input asp-for="Email" type="email" class="form-control rounded-pill" required />
+                    <span asp-validation-for="Email" class="text-danger small"></span>
+                </div>
+
+
+                <div class="mb-3">
+                    <label class="fw-bold">Phone</label>
+                    <input asp-for="PhoneNumber" class="form-control rounded-pill" required />
+                    <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                </div>
+
+
+                <div class="mb-3">
+                    <label class="fw-bold">Address</label>
+                    <input asp-for="Address" class="form-control rounded-pill" required />
+                    <span asp-validation-for="Address" class="text-danger small"></span>
+                </div>
+
+
+                <button type="submit" class="btn btn-primary w-100 rounded-pill fw-bold">SAVE CHANGES</button>
+                <a asp-action="Index" class="btn btn-light w-100 rounded-pill mt-2">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

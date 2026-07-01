@@ -1,0 +1,267 @@
+﻿@{
+    ViewData["Title"] = "Admin Control Center";
+}
+
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f4f7f6;
+    }
+
+
+    .dashboard-header {
+        background: linear-gradient(135deg, #0575e6 0%, #00f260 100%);
+        color: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(30, 60, 114, 0.2);
+        margin-bottom: 35px;
+        position: relative;
+    }
+
+
+    .contact-info-bar {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(5px);
+        border-radius: 12px;
+        padding: 15px 25px;
+        margin-top: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+
+    .module-card {
+        background: white;
+        border-radius: 18px;
+        padding: 30px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border-top: 5px solid transparent;
+    }
+
+
+        .module-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+
+    /* Distinct Theme Colors */
+    .card-customers {
+        border-top-color: #0d6efd;
+    }
+
+
+    .card-parcels {
+        border-top-color: #198754;
+    }
+
+
+    .card-tracking {
+        border-top-color: #0dcaf0;
+    }
+
+
+    .card-dispatch {
+        border-top-color: #6610f2;
+    }
+    /* New Module Color */
+    .card-payments {
+        border-top-color: #fd7e14;
+    }
+
+
+    .card-employees {
+        border-top-color: #6f42c1;
+    }
+
+
+    .card-reports {
+        border-top-color: #dc3545;
+    }
+
+
+    .card-guest {
+        border-top-color: #212529;
+    }
+
+
+    .icon-wrapper {
+        width: 70px;
+        height: 70px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px auto;
+        background-color: #f8f9fa;
+        transition: 0.3s;
+    }
+
+
+    .module-card:hover .icon-wrapper {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+
+    .btn-custom {
+        border-radius: 12px;
+        font-weight: bold;
+        padding: 10px 20px;
+        transition: all 0.3s;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+    }
+</style>
+
+
+<div class="container py-4 animate__animated animate__fadeIn">
+
+
+    <!-- PROFESSIONAL HEADER WITH CONTACT & ADDRESS -->
+    <div class="dashboard-header animate__animated animate__fadeInDown">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <h1 class="fw-bold mb-1"><i class="fas fa-shield-alt me-2 text-warning"></i>CourierPro HQ</h1>
+                <p class="mb-0 text-white-50">Enterprise Resource Planning & Logistics Control</p>
+            </div>
+            <div class="text-end">
+                <div class="badge bg-success rounded-pill px-3 py-2 mb-2">
+                    <i class="fas fa-circle animate__animated animate__flash animate__infinite me-2"></i>System Online
+                </div>
+                <div class="text-white small">@DateTime.Now.ToString("dddd, dd MMMM yyyy")</div>
+            </div>
+        </div>
+
+
+        <!-- COMPANY ADDRESS & CONTACT BAR -->
+        <div class="contact-info-bar d-flex flex-wrap justify-content-between align-items-center mt-4">
+            <div class="me-4"><i class="fas fa-map-marker-alt text-warning me-2"></i> UET Lahore, Pakistan</div>
+            <div class="me-4"><i class="fas fa-phone-alt text-warning me-2"></i> +92 331 2224867</div>
+            <div><i class="fas fa-envelope text-warning me-2"></i> support@courierpro.com</div>
+        </div>
+    </div>
+
+
+    <div class="row g-4">
+
+
+        <!-- 1. CUSTOMERS -->
+        <div class="col-md-4 col-lg-3">
+            <div class="module-card card-customers text-center">
+                <div>
+                    <div class="icon-wrapper text-primary shadow-sm">
+                        <i class="fas fa-users fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Customer Directory</h5>
+                    <p class="text-muted small">Manage client profiles and link them to their parcel history.</p>
+                </div>
+                <a href="/Customer/Index" class="btn btn-primary w-100 btn-custom shadow-sm">Manage Clients</a>
+            </div>
+        </div>
+
+
+        <!-- 2. PARCEL BOOKING -->
+        <div class="col-md-4 col-lg-3">
+            <div class="module-card card-parcels text-center">
+                <div>
+                    <div class="icon-wrapper text-success shadow-sm">
+                        <i class="fas fa-box-open fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Shipment Booking</h5>
+                    <p class="text-muted small">New PKR bookings with automated weight-based pricing.</p>
+                </div>
+                <div>
+                    <a href="/Parcel/Index" class="btn btn-success w-100 btn-custom shadow-sm mb-2">Shipment Logs</a>
+                    <a href="/Parcel/Create" class="text-success small fw-bold d-block text-decoration-none">+ New Consignment</a>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- 3. NEW MODULE: DISPATCH CENTER (Rider Assignment) -->
+        <div class="col-md-4 col-lg-3">
+            <div class="module-card card-dispatch text-center">
+                <div>
+                    <div class="icon-wrapper text-indigo shadow-sm" style="color: #6610f2;">
+                        <i class="fas fa-truck-loading fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Dispatch Hub</h5>
+                    <p class="text-muted small">Assign available riders to booked parcels and start transit.</p>
+                </div>
+                <a href="/Dispatch/Index" class="btn btn-custom text-white w-100 shadow-sm" style="background-color: #6610f2;">Assign Riders</a>
+            </div>
+        </div>
+
+
+        <!-- 4. LIVE TRACKING -->
+        <div class="col-md-4 col-lg-3">
+            <div class="module-card card-tracking text-center">
+                <div>
+                    <div class="icon-wrapper text-info shadow-sm">
+                        <i class="fas fa-map-marked-alt fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Live Monitoring</h5>
+                    <p class="text-muted small">Update hub locations and transition statuses in real-time.</p>
+                </div>
+                <a href="/Tracking/Index" class="btn btn-info text-white w-100 btn-custom shadow-sm">Control Room</a>
+            </div>
+        </div>
+
+
+        <!-- 5. INVOICES & PAYMENTS -->
+        <div class="col-md-4 col-lg-3">
+            <div class="module-card card-payments text-center">
+                <div>
+                    <div class="icon-wrapper text-warning shadow-sm">
+                        <i class="fas fa-file-invoice-dollar fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Fiscal Accounts</h5>
+                    <p class="text-muted small">GST reports, fuel surcharges, and paid/unpaid invoice logs.</p>
+                </div>
+                <a href="/Invoice/Index" class="btn btn-warning text-white w-100 btn-custom shadow-sm">View Invoices</a>
+            </div>
+        </div>
+
+
+        <!-- 6. EMPLOYEES -->
+        <div class="col-md-4 col-lg-3">
+            <div class="module-card card-employees text-center">
+                <div>
+                    <div class="icon-wrapper text-purple shadow-sm" style="color: #6f42c1;">
+                        <i class="fas fa-user-tie fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Staff & Riders</h5>
+                    <p class="text-muted small">Roster management for drivers, managers, and office workers.</p>
+                </div>
+                <a href="/Employee/Index" class="btn w-100 btn-custom text-white shadow-sm" style="background-color: #6f42c1;">Manage Roster</a>
+            </div>
+        </div>
+
+
+        
+
+
+        <!-- 8. GUEST PORTAL -->
+        <div class="col-md-4 col-lg-3">
+            <div class="module-card card-guest text-center">
+                <div>
+                    <div class="icon-wrapper text-dark shadow-sm">
+                        <i class="fas fa-globe-asia fa-2x"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark">Public Site</h5>
+                    <p class="text-muted small">The landing page where customers track parcels without login.</p>
+                </div>
+                <a href="/Guest/Track" class="btn btn-dark w-100 btn-custom shadow-sm">View Web Page</a>
+            </div>
+        </div>
+
+
+    </div>
+</div>

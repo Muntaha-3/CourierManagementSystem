@@ -1,0 +1,146 @@
+﻿@model IEnumerable<CourierManagementSystem.Models.Invoice>
+@{
+    Layout = "_Layout";
+}
+
+
+<div class="container animate__animated animate__fadeInUp mt-4">
+
+
+    <div class="d-flex justify-content-between align-items-center my-4">
+        <a href="/Dashboard/Index" class="btn btn-secondary rounded-pill px-4 shadow-sm">
+            <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+        </a>
+        <a asp-controller="Employee" asp-action="Index" class="btn btn-success rounded-pill px-4 shadow-sm fw-bold text-white" style="background-color: #198754;">
+            Next to Employees <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+    </div>
+
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary mb-0">
+            <i class="fas fa-file-invoice-dollar me-2"></i>Invoices
+        </h2>
+        <a asp-action="Create" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
+            <i class="fas fa-plus me-1"></i> New Invoice
+        </a>
+    </div>
+
+
+    <!-- Stats Row -->
+    @{
+        var total = Model.Count();
+        var paid = Model.Count(i => i.Status == CourierManagementSystem.Models.InvoiceStatus.Paid);
+        var overdue = Model.Count(i => i.Status == CourierManagementSystem.Models.InvoiceStatus.Overdue);
+        var revenue = Model.Where(i => i.Status == CourierManagementSystem.Models.InvoiceStatus.Paid).Sum(i => i.GrandTotal);
+        var pending = Model.Where(i => i.Status != CourierManagementSystem.Models.InvoiceStatus.Paid
+                                      && i.Status != CourierManagementSystem.Models.InvoiceStatus.Cancelled)
+                             .Sum(i => i.BalanceDue);
+    }
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="glass-card p-3 text-center shadow-sm border-0">
+                <div class="text-muted small">Total Invoices</div>
+                <div class="fw-bold fs-4 text-primary">@total</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="glass-card p-3 text-center shadow-sm border-0">
+                <div class="text-muted small">Paid</div>
+                <div class="fw-bold fs-4 text-success">@paid</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="glass-card p-3 text-center shadow-sm border-0">
+                <div class="text-muted small">Overdue</div>
+                <div class="fw-bold fs-4 text-danger">@overdue</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="glass-card p-3 text-center shadow-sm border-0">
+                <div class="text-muted small">Total Revenue Collected</div>
+                <div class="fw-bold fs-5 text-primary">PKR @revenue.ToString("N0")</div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Table -->
+    <div class="glass-card shadow-sm border-0 rounded-4 overflow-hidden">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-primary">
+                <tr>
+                    <th>Invoice #</th>
+                    <th>Parcel / Tracking</th>
+                    <th>Customer</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Grand Total</th>
+                    <th>Balance Due</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="9" class="text-center text-muted py-5">
+                            <i class="fas fa-file-invoice fa-2x mb-2 d-block"></i>No invoices yet.
+                        </td>
+                    </tr>
+                }
+                @foreach (var inv in Model)
+                {
+                    var statusClass = inv.Status switch
+                    {
+                        CourierManagementSystem.Models.InvoiceStatus.Paid => "badge bg-success",
+                        CourierManagementSystem.Models.InvoiceStatus.Overdue => "badge bg-danger",
+                        CourierManagementSystem.Models.InvoiceStatus.Sent => "badge bg-info text-dark",
+                        CourierManagementSystem.Models.InvoiceStatus.Cancelled => "badge bg-secondary",
+                        _ => "badge bg-warning text-dark"
+                    };
+                    <tr>
+                        <td><span class="fw-bold text-primary small">@inv.InvoiceNumber</span></td>
+                        <td><span class="badge bg-light text-dark border">@inv.Parcel?.TrackingNumber</span></td>
+                        <td>@inv.Customer?.Name</td>
+                        <td>@inv.IssueDate.ToString("dd MMM yyyy")</td>
+                        <td class="@(inv.DueDate < DateTime.Now && inv.Status != CourierManagementSystem.Models.InvoiceStatus.Paid ? "text-danger fw-bold" : "")">
+                            @inv.DueDate.ToString("dd MMM yyyy")
+                        </td>
+                        <td class="fw-bold">PKR @inv.GrandTotal.ToString("N0")</td>
+                        <td class="@(inv.BalanceDue > 0 ? "text-danger fw-bold" : "text-success fw-bold")">
+                            PKR @inv.BalanceDue.ToString("N0")
+                        </td>
+                        <td><span class="@statusClass">@inv.Status</span></td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@inv.Id"
+                               class="btn btn-sm btn-outline-info rounded-pill me-1" title="View">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@inv.Id"
+                               class="btn btn-sm btn-outline-warning rounded-pill me-1" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@inv.Id"
+                               class="btn btn-sm btn-outline-danger rounded-pill" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+
+    <!-- Pending balance footer -->
+    @if (pending > 0)
+    {
+        <div class="alert alert-warning rounded-4 mt-3 d-flex align-items-center">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Total balance pending across unpaid invoices: <strong class="ms-1">PKR @pending.ToString("N0")</strong>
+        </div>
+    }
+</div>

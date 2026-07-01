@@ -1,0 +1,174 @@
+﻿@model IEnumerable<CourierManagementSystem.Models.Employee>
+
+
+@{
+    ViewData["Title"] = "Human Resources Roster";
+}
+
+
+<div class="container animate__animated animate__fadeIn">
+
+
+    <div class="d-flex justify-content-between align-items-center my-4">
+        <a href="/Dashboard/Index" class="btn btn-secondary rounded-pill px-4 shadow-sm">
+            <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+        </a>
+
+    </div>
+
+
+    <div class="d-flex justify-content-between align-items-center mb-4 mt-2 border-bottom pb-3">
+        <div>
+            <h2 class="fw-bold m-0 text-dark" style="letter-spacing: -0.5px;">
+                <i class="fas fa-users-cog text-primary me-2"></i> Employee Operations Hub
+            </h2>
+            <p class="text-muted small m-0 mt-1">Manage workforce organization identities, access permissions, and functional system roles.</p>
+        </div>
+        <a href="/Employee/Create" class="btn btn-primary rounded-pill px-4 py-2 shadow-sm fw-bold">
+            <i class="fas fa-user-plus me-2"></i> + Onboard New Staff
+        </a>
+    </div>
+
+
+    <div class="row g-3 my-4 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label small fw-bold text-secondary">Search by Name / Email</label>
+            <input type="text" id="searchBox" class="form-control" placeholder="e.g. Zain Ahmed" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label small fw-bold text-secondary">Filter by Designation</label>
+            <select id="designationFilter" class="form-select">
+                <option value="">All Roles / Designations</option>
+                <option value="Admin">Admin</option>
+                <option value="Driver">Driver</option>
+                <option value="Worker">Worker</option>
+                <option value="Labour">Labour</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <div class="d-flex gap-2">
+                <button id="btnFilter" class="btn btn-dark flex-grow-1 fw-bold py-2 shadow-sm rounded-pill">
+                    <i class="fas fa-filter me-2"></i> FILTER ROSTER
+                </button>
+                <button id="btnResetFilter" class="btn btn-outline-secondary fw-bold py-2 shadow-sm rounded-pill" title="Reset and show all rows">
+                    <i class="fas fa-undo"></i> Reset
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card border-0 shadow-sm custom-table-card" style="border-radius: 15px; overflow: hidden;">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 bg-white">
+                <thead class="bg-light text-secondary text-uppercase small font-weight-bold">
+                    <tr>
+                        <th class="ps-4">Full Name</th>
+                        <th>Email Address</th>
+                        <th>Contact Phone</th>
+                        <th>Designation</th>
+                        <th>Assigned Details</th>
+                        <th>Status</th>
+                        <th class="text-center pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="employeeTableBody">
+                    @foreach (var item in Model)
+                    {
+                        <tr class="employee-row" data-role="@item.Role" data-name="@item.Name?.ToLower()" data-email="@item.Email?.ToLower()">
+                            <td class="ps-4 fw-bold text-dark">
+                                <i class="fas fa-user-circle text-muted me-2"></i> @item.Name
+                            </td>
+                            <td class="text-muted">@item.Email</td>
+                            <td class="text-muted">@item.PhoneNumber</td>
+                            <td>
+                                @if (item.Role == "Admin")
+                                {
+                                    <span class="badge rounded-pill px-3 py-2 text-white" style="background-color: #6f42c1;">Admin</span>
+                                }
+                                else if (item.Role == "Driver")
+                                {
+                                    <span class="badge bg-info rounded-pill px-3 py-2 text-white">Driver</span>
+                                }
+                                else if (item.Role == "Worker")
+                                {
+                                    <span class="badge bg-primary rounded-pill px-3 py-2 text-white" style="background-color: #0d6efd;">Worker</span>
+                                }
+                                else if (item.Role == "Labour")
+                                {
+                                    <span class="badge bg-warning rounded-pill px-3 py-2 text-dark" style="background-color: #ffc107;">Labour</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary rounded-pill px-3 py-2 text-white">@item.Role</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.Role == "Driver" && !string.IsNullOrEmpty(item.VehicleNumber))
+                                {
+                                    <small class="fw-bold text-muted"><i class="fas fa-truck me-1"></i> @item.VehicleNumber (@item.AssignedArea)</small>
+                                }
+                                else
+                                {
+                                    <span class="text-light-muted small italic text-muted">N/A (Office Base)</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.IsActive)
+                                {
+                                    <span class="text-success small fw-bold d-flex align-items-center"><i class="fas fa-circle me-1 fa-xs"></i> Active</span>
+                                }
+                                else
+                                {
+                                    <span class="text-danger small fw-bold d-flex align-items-center"><i class="fas fa-circle me-1 fa-xs"></i> Inactive</span>
+                                }
+                            </td>
+                            <td class="text-center pe-4">
+                                <a href="/Employee/Edit/@item.Id" class="text-warning me-3" title="Edit"><i class="fas fa-pencil-alt"></i></a>
+                                <a href="/Employee/Delete/@item.Id" class="text-danger" title="Delete" onclick="return confirm('Are you sure you want to remove this employee?');"><i class="fas fa-trash-alt"></i></a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+    // Formulates client side table filtering based on updated roles matching
+    $('#btnFilter').click(function () {
+    var selectedRole = $('#designationFilter').val().toLowerCase();
+    var searchKeyword = $('#searchBox').val().toLowerCase();
+
+
+    $('.employee-row').each(function () {
+    var rowRole = $(this).attr('data-role').toLowerCase();
+    var rowName = $(this).attr('data-name');
+    var rowEmail = $(this).attr('data-email');
+
+
+    var matchesRole = (selectedRole === "" || rowRole === selectedRole);
+    var matchesSearch = (searchKeyword === "" || rowName.includes(searchKeyword) || rowEmail.includes(searchKeyword));
+
+
+    if (matchesRole && matchesSearch) {
+    $(this).show();
+    } else {
+    $(this).hide();
+    }
+    });
+    });
+
+
+    // Trigger action listener to clear variables and restore initial data view state
+    $('#btnResetFilter').click(function () {
+    $('#searchBox').val('');
+    $('#designationFilter').val('');
+    $('.employee-row').fadeIn(200);
+    });
+    });
+</script>

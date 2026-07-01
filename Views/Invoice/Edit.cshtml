@@ -1,0 +1,380 @@
+﻿@model CourierManagementSystem.Models.Invoice
+@{
+    Layout = "_Layout";
+    var parcels = (List<CourierManagementSystem.Models.Parcel>)ViewBag.Parcels;
+    var customers = (List<CourierManagementSystem.Models.Customer>)ViewBag.Customers;
+}
+
+
+<div class="container animate__animated animate__fadeInUp mt-4">
+    <div class="glass-card p-5 shadow-lg border-0">
+        <h2 class="fw-bold text-warning mb-4 text-center">
+            <i class="fas fa-edit me-2"></i>Edit Invoice — <span class="text-primary">@Model.InvoiceNumber</span>
+        </h2>
+
+
+        <form asp-action="Edit" method="post" id="invoiceForm">
+            @Html.AntiForgeryToken()
+
+
+            <!-- Hidden fields required for Edit POST -->
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="InvoiceNumber" />
+            <input type="hidden" asp-for="ParcelBaseAmount" />
+
+
+            <!-- ══ ROW 1: Parcel & Customer ══════════════════════════ -->
+            <div class="row mb-4">
+                <div class="col-md-6 border-end pe-4">
+                    <h5 class="fw-bold text-dark mb-3"><i class="fas fa-box me-2"></i>1. Link Parcel</h5>
+
+
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold">Select Parcel</label>
+                        <select asp-for="ParcelId" id="parcelSelect" class="form-select border-primary p-3 rounded-pill" required>
+                            <option value="">-- Choose Parcel --</option>
+                            @foreach (var p in parcels)
+                            {
+                                <option value="@p.Id" selected="@(p.Id == Model.ParcelId)">
+                                    @p.TrackingNumber — @p.Sender?.Name (@p.Service)
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+
+                    <div class="alert alert-info py-2 px-3 rounded-pill small" id="parcelCostAlert">
+                        Parcel Base Cost: <strong id="parcelCostDisplay">PKR @Model.ParcelBaseAmount.ToString("N0")</strong>
+                    </div>
+                </div>
+
+
+                <div class="col-md-6 ps-4">
+                    <h5 class="fw-bold text-dark mb-3"><i class="fas fa-user-circle me-2"></i>2. Bill To (Customer)</h5>
+                    <select asp-for="CustomerId" class="form-select border-primary p-3 rounded-pill" required>
+                        <option value="">-- Choose Customer --</option>
+                        @foreach (var c in customers)
+                        {
+                            <option value="@c.Id" selected="@(c.Id == Model.CustomerId)">@c.Name (@c.PhoneNumber)</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+
+            <!-- ══ ROW 2: Taxes ══════════════════════════════════════ -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="fw-bold text-dark mb-3"><i class="fas fa-percent me-2"></i>3. Taxes & Surcharges</h5>
+                </div>
+
+
+                <div class="col-md-3 mb-3">
+                    <label class="form-label small fw-bold">GST %</label>
+                    <div class="input-group">
+                        <input asp-for="GstPercent" type="number" step="0.1" min="0" max="100"
+                               class="form-control p-3 rounded-pill border-end-0 calc-trigger" />
+                        <span class="input-group-text bg-white rounded-pill border-start-0 pe-3">%</span>
+                    </div>
+                </div>
+
+
+                <div class="col-md-3 mb-3">
+                    <label class="form-label small fw-bold">Additional Tax % <small class="text-muted">(WHT etc.)</small></label>
+                    <div class="input-group">
+                        <input asp-for="AdditionalTaxPercent" type="number" step="0.1" min="0" max="100"
+                               class="form-control p-3 rounded-pill border-end-0 calc-trigger" />
+                        <span class="input-group-text bg-white rounded-pill border-start-0 pe-3">%</span>
+                    </div>
+                </div>
+
+
+                <div class="col-md-2 mb-3">
+                    <label class="form-label small fw-bold">Fuel Surcharge</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white rounded-pill border-end-0 ps-3">₨</span>
+                        <input asp-for="FuelSurcharge" type="number" step="1" min="0"
+                               class="form-control p-3 rounded-pill border-start-0 calc-trigger" />
+                    </div>
+                </div>
+
+
+                <div class="col-md-2 mb-3">
+                    <label class="form-label small fw-bold">Remote Area Fee</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white rounded-pill border-end-0 ps-3">₨</span>
+                        <input asp-for="RemoteAreaSurcharge" type="number" step="1" min="0"
+                               class="form-control p-3 rounded-pill border-start-0 calc-trigger" />
+                    </div>
+                </div>
+
+
+                <div class="col-md-2 mb-3">
+                    <label class="form-label small fw-bold">Insurance Fee</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white rounded-pill border-end-0 ps-3">₨</span>
+                        <input asp-for="InsuranceFee" type="number" step="1" min="0"
+                               class="form-control p-3 rounded-pill border-start-0 calc-trigger" />
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ══ ROW 3: Discounts & Gift Code ═════════════════════ -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="fw-bold text-dark mb-3"><i class="fas fa-tags me-2"></i>4. Discounts & Gift Code</h5>
+                </div>
+
+
+                <div class="col-md-3 mb-3">
+                    <label class="form-label small fw-bold">Discount %</label>
+                    <div class="input-group">
+                        <input asp-for="DiscountPercent" type="number" step="0.1" min="0" max="100"
+                               class="form-control p-3 rounded-pill border-end-0 calc-trigger" />
+                        <span class="input-group-text bg-white rounded-pill border-start-0 pe-3">%</span>
+                    </div>
+                </div>
+
+
+                <div class="col-md-5 mb-3">
+                    <label class="form-label small fw-bold">Gift / Promo Code</label>
+                    <div class="input-group">
+                        <input asp-for="GiftCode" id="giftCodeInput" type="text"
+                               class="form-control p-3 rounded-pill border-end-0 text-uppercase"
+                               maxlength="20" />
+                        <button type="button" class="btn btn-outline-primary rounded-pill border-start-0 px-4"
+                                id="applyCodeBtn">
+                            Apply
+                        </button>
+                    </div>
+                    <div id="codeMessage" class="small mt-1 ps-2
+                        @(Model.GiftCodeDiscount > 0 ? "text-success fw-bold" : "")">
+                        @(Model.GiftCodeDiscount > 0 ? $"Code applied! PKR {Model.GiftCodeDiscount:N0} off." : "")
+                    </div>
+                    <input type="hidden" asp-for="GiftCodeDiscount" id="giftCodeDiscountInput" />
+                </div>
+
+
+                <div class="col-md-4 mb-3">
+                    <label class="form-label small fw-bold">Payment Method</label>
+                    <select asp-for="PaymentMethod"
+                            class="form-select border-primary p-3 rounded-pill"
+                            asp-items="Html.GetEnumSelectList<CourierManagementSystem.Models.PaymentMethod>()">
+                    </select>
+                </div>
+            </div>
+
+
+            <!-- ══ ROW 4: Payment & Dates ════════════════════════════ -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <h5 class="fw-bold text-dark mb-3"><i class="fas fa-calendar-alt me-2"></i>5. Payment & Dates</h5>
+                </div>
+
+
+                <div class="col-md-3 mb-3">
+                    <label class="form-label small fw-bold">Amount Paid (PKR)</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white rounded-pill border-end-0 ps-3">₨</span>
+                        <input asp-for="AmountPaid" type="number" step="1" min="0"
+                               class="form-control p-3 rounded-pill border-start-0 calc-trigger" />
+                    </div>
+                </div>
+
+
+                <div class="col-md-3 mb-3">
+                    <label class="form-label small fw-bold">Invoice Status</label>
+                    <select asp-for="Status"
+                            class="form-select border-primary p-3 rounded-pill"
+                            asp-items="Html.GetEnumSelectList<CourierManagementSystem.Models.InvoiceStatus>()">
+                    </select>
+                </div>
+
+
+                <div class="col-md-3 mb-3">
+                    <label class="form-label small fw-bold">Issue Date</label>
+                    <input asp-for="IssueDate" type="date" class="form-control p-3 rounded-pill"
+                           value="@Model.IssueDate.ToString("yyyy-MM-dd")" />
+                </div>
+
+
+                <div class="col-md-3 mb-3">
+                    <label class="form-label small fw-bold">Due Date</label>
+                    <input asp-for="DueDate" type="date" class="form-control p-3 rounded-pill"
+                           value="@Model.DueDate.ToString("yyyy-MM-dd")" />
+                </div>
+            </div>
+
+
+            <!-- ══ NOTES ═════════════════════════════════════════════ -->
+            <div class="mb-4">
+                <label class="form-label small fw-bold"><i class="fas fa-sticky-note me-1"></i> Notes / Remarks</label>
+                <textarea asp-for="Notes" class="form-control rounded-4" rows="2"
+                          placeholder="Payment terms, special instructions, etc."></textarea>
+            </div>
+
+
+            <!-- ══ LIVE SUMMARY CARD ══════════════════════════════════ -->
+            <div class="card border-warning rounded-4 mb-4" id="summaryCard">
+                <div class="card-header bg-warning text-dark rounded-top-4 fw-bold">
+                    <i class="fas fa-calculator me-2"></i>Live Invoice Summary
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-2 border-end">
+                            <div class="small text-muted">Base Amount</div>
+                            <div class="fw-bold fs-6" id="s_base">PKR 0</div>
+                        </div>
+                        <div class="col-md-2 border-end">
+                            <div class="small text-muted">Surcharges</div>
+                            <div class="fw-bold fs-6" id="s_surcharge">PKR 0</div>
+                        </div>
+                        <div class="col-md-2 border-end">
+                            <div class="small text-muted">Total Tax</div>
+                            <div class="fw-bold fs-6 text-warning" id="s_tax">PKR 0</div>
+                        </div>
+                        <div class="col-md-2 border-end">
+                            <div class="small text-muted">Total Discount</div>
+                            <div class="fw-bold fs-6 text-success" id="s_discount">- PKR 0</div>
+                        </div>
+                        <div class="col-md-2 border-end">
+                            <div class="small text-muted">Grand Total</div>
+                            <div class="fw-bold fs-5 text-primary" id="s_grand">PKR 0</div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="small text-muted">Balance Due</div>
+                            <div class="fw-bold fs-5 text-danger" id="s_balance">PKR 0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ══ SUBMIT ════════════════════════════════════════════ -->
+            <div class="text-center">
+                <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 me-2">
+                    <i class="fas fa-arrow-left me-1"></i> Cancel
+                </a>
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-info rounded-pill px-4 me-2">
+                    <i class="fas fa-eye me-1"></i> View Invoice
+                </a>
+                <button type="submit" class="btn btn-warning btn-lg px-5 rounded-pill fw-bold shadow text-dark">
+                    <i class="fas fa-save me-2"></i>SAVE CHANGES
+                </button>
+            </div>
+
+
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        const fmt = n => "PKR " + parseFloat(n || 0).toLocaleString("en-PK", { minimumFractionDigits: 0 });
+        const inp = sel => parseFloat(document.querySelector(sel)?.value) || 0;
+
+
+        // Seed from existing model data on page load
+        let parcelBase  = @Model.ParcelBaseAmount;
+        let giftDiscount = @Model.GiftCodeDiscount;
+
+
+        // ── Parcel change: fetch fresh cost ──────────────────────────────
+        document.getElementById("parcelSelect").addEventListener("change", function () {
+            const pid = this.value;
+            if (!pid) { parcelBase = 0; updateSummary(); return; }
+
+
+            fetch(`/Invoice/GetParcelCost?parcelId=${pid}`)
+                .then(r => r.json())
+                .then(data => {
+                    parcelBase = parseFloat(data.cost) || 0;
+                    document.getElementById("parcelCostDisplay").textContent = fmt(parcelBase);
+                    updateSummary();
+                });
+        });
+
+
+        // ── Apply Gift Code ───────────────────────────────────────────────
+        document.getElementById("applyCodeBtn").addEventListener("click", function () {
+            const code  = document.getElementById("giftCodeInput").value.trim().toUpperCase();
+            const msgEl = document.getElementById("codeMessage");
+
+
+            if (!code) {
+                msgEl.textContent  = "Please enter a code.";
+                msgEl.className    = "small mt-1 ps-2 text-danger";
+                return;
+            }
+
+
+            fetch("/Invoice/ValidateGiftCode", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "RequestVerificationToken": document.querySelector("[name='__RequestVerificationToken']")?.value ?? ""
+                },
+                body: JSON.stringify(code)
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.valid) {
+                    giftDiscount = parseFloat(data.discount) || 0;
+                    document.getElementById("giftCodeDiscountInput").value = giftDiscount;
+                    msgEl.textContent = data.message;
+                    msgEl.className   = "small mt-1 ps-2 text-success fw-bold";
+                } else {
+                    giftDiscount = 0;
+                    document.getElementById("giftCodeDiscountInput").value = 0;
+                    msgEl.textContent = data.message;
+                    msgEl.className   = "small mt-1 ps-2 text-danger";
+                }
+                updateSummary();
+            });
+        });
+
+
+        // ── Live Summary ─────────────────────────────────────────────────
+        function updateSummary() {
+            const fuel      = inp("[name='FuelSurcharge']");
+            const remote    = inp("[name='RemoteAreaSurcharge']");
+            const insurance = inp("[name='InsuranceFee']");
+            const gstPct    = inp("[name='GstPercent']");
+            const addTaxPct = inp("[name='AdditionalTaxPercent']");
+            const discPct   = inp("[name='DiscountPercent']");
+            const amtPaid   = inp("[name='AmountPaid']");
+
+
+            const surcharges = fuel + remote + insurance;
+            const subTotal   = parcelBase + surcharges;
+            const gst        = subTotal * (gstPct / 100);
+            const addTax     = subTotal * (addTaxPct / 100);
+            const totalTax   = gst + addTax;
+            const discAmt    = subTotal * (discPct / 100);
+            const totalDisc  = discAmt + giftDiscount;
+            const grand      = Math.max(0, subTotal + totalTax - totalDisc);
+            const balance    = Math.max(0, grand - amtPaid);
+
+
+            document.getElementById("s_base").textContent     = fmt(parcelBase);
+            document.getElementById("s_surcharge").textContent = fmt(surcharges);
+            document.getElementById("s_tax").textContent      = fmt(totalTax);
+            document.getElementById("s_discount").textContent = "- " + fmt(totalDisc);
+            document.getElementById("s_grand").textContent    = fmt(grand);
+            document.getElementById("s_balance").textContent  = fmt(balance);
+        }
+
+
+        document.querySelectorAll(".calc-trigger").forEach(el =>
+            el.addEventListener("input", updateSummary)
+        );
+
+
+        // Run immediately so summary shows existing values on page load
+        updateSummary();
+    </script>
+}
+
+

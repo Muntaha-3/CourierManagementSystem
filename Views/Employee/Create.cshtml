@@ -1,0 +1,107 @@
+﻿@model CourierManagementSystem.Models.Employee
+@{
+    Layout = "_Layout";
+}
+
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="glass-card p-5 shadow-lg border-0 bg-white rounded-4">
+                <h3 class="fw-bold text-dark mb-4 text-center">Onboard New Personnel</h3>
+                <form asp-action="Create" method="post">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="fw-bold small">Full Name</label>
+                            <input asp-for="Name" class="form-control rounded-pill" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="fw-bold small">Email</label>
+                            <input asp-for="Email" type="email" class="form-control rounded-pill" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="fw-bold small text-primary">Phone (Starts 03...)</label>
+                            <input asp-for="PhoneNumber" id="pakPhone" class="form-control rounded-pill" maxlength="11" placeholder="03XXXXXXXXX" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="fw-bold small">Password</label>
+                            <input asp-for="Password" type="password" class="form-control rounded-pill" required />
+                        </div>
+                        <div class="col-md-12">
+                            <label class="fw-bold small">Assign Role</label>
+                            <select asp-for="Role" id="roleSelect" class="form-select rounded-pill">
+                                <option value="">-- Select Role --</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Driver">Driver</option>
+                                <option value="Worker">Worker</option>
+                            </select>
+                        </div>
+
+
+                        <!-- DYNAMIC RIDER SECTION -->
+                        <div id="riderFields" class="col-md-12" style="display:none;">
+                            <div class="p-4 rounded-4 bg-light border-start border-info border-5">
+                                <h6 class="fw-bold text-info mb-3">Vehicle & Route Assignment</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="small fw-bold">Vehicle Type</label>
+                                        <select asp-for="VehicleType" class="form-select">
+                                            <option value="Bike">Motorcycle</option>
+                                            <option value="Van">Delivery Van</option>
+                                            <option value="Truck">Cargo Truck</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="small fw-bold">Plate (ABC-1234)</label>
+                                        <input asp-for="VehicleNumber" id="vPlate" class="form-control" placeholder="LEA-1234" maxlength="8" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="small fw-bold">Assigned Area</label>
+                                        <input asp-for="AssignedArea" class="form-control" placeholder="e.g. Lahore" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-12 mt-4 text-center">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5">REGISTER EMPLOYEE</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // 1. Role Toggle
+            $('#roleSelect').change(function() {
+                if ($(this).val() === 'Driver') $('#riderFields').slideDown();
+                else $('#riderFields').slideUp();
+            });
+
+
+            // 2. Phone Mask (03 + 9 Digits)
+            $('#pakPhone').on('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+                if (this.value.length > 0 && this.value[0] !== '0') this.value = '';
+                if (this.value.length > 1 && this.value[1] !== '3') this.value = '0';
+            });
+
+
+            // 3. Vehicle Plate Mask (ABC-1234)
+            $('#vPlate').on('input', function() {
+                let v = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+                if (v.length > 3) {
+                    this.value = v.substring(0, 3).replace(/[^A-Z]/g, '') + "-" + v.substring(3, 7).replace(/[^0-9]/g, '');
+                } else {
+                    this.value = v.replace(/[^A-Z]/g, '');
+                }
+            });
+        });
+    </script>
+}

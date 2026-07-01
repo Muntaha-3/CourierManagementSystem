@@ -1,0 +1,106 @@
+﻿@model CourierManagementSystem.Models.Parcel
+@{
+    Layout = "_Layout";
+}
+
+
+<div class="container mt-4 animate__animated animate__fadeIn">
+
+
+    <!-- TOP NAVIGATION: Only visible to Admin -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            @if (Context.Session.GetString("UserRole") == "Admin")
+            {
+                <a href="/Dashboard/Index" class="btn btn-outline-secondary btn-sm rounded-pill px-3 me-2">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+                </a>
+            }
+        </div>
+
+
+        @if (Context.Session.GetString("UserRole") == "Admin")
+        {
+            <a href="/Invoice/Index" class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm">
+                Next to Invoice <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        }
+    </div>
+
+
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <!-- Aesthetic Update Card -->
+            <div class="glass-card p-5 shadow-lg border-start border-info border-5 bg-white rounded-4">
+                <div class="text-center mb-4">
+                    <div class="bg-info text-white rounded-circle d-inline-flex p-3 mb-3 shadow">
+                        <i class="fas fa-truck-loading fa-2x"></i>
+                    </div>
+                    <h3 class="fw-bold text-info">Update Shipment</h3>
+                    <p class="text-muted">Tracking ID: <span class="badge bg-light text-dark border">@Model.TrackingNumber</span></p>
+                </div>
+
+
+                <hr class="opacity-25" />
+
+
+                <form asp-action="UpdateStatus" method="post">
+                    <!-- Hidden ID -->
+                    <input type="hidden" name="id" value="@Model.Id" />
+
+
+                    <!-- 1. LOCATION UPDATE -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold"><i class="fas fa-map-marker-alt me-2 text-danger"></i>Current Physical Location</label>
+                        <input type="text" name="currentLocation" class="form-control rounded-pill border-info shadow-sm"
+                               value="@Model.CurrentLocation" placeholder="e.g. Faisalabad Hub" required />
+                    </div>
+
+
+                    <!-- 2. STATUS UPDATE: Restricted for Driver -->
+                    <div class="mb-4">
+                        <label class="form-label fw-bold"><i class="fas fa-tasks me-2 text-primary"></i>Movement Status</label>
+                        <select name="status" class="form-select rounded-pill border-info shadow-sm">
+                            @if (Context.Session.GetString("UserRole") == "Driver")
+                            {
+                                <!-- Driver restricted view -->
+                                <option value="InTransit" selected="@(Model.Status == ParcelStatus.InTransit)">In-Transit (Moving)</option>
+                                <option value="Delivered" selected="@(Model.Status == ParcelStatus.Delivered)">Delivered (Job Done) ✅</option>
+                            }
+                            else
+                            {
+                                <!-- Admin full view -->
+                                @foreach (var status in Enum.GetValues(typeof(CourierManagementSystem.Models.ParcelStatus)))
+                                {
+                                    <option value="@status" selected="@(Model.Status.ToString() == status.ToString())">@status</option>
+                                }
+                            }
+                        </select>
+                    </div>
+
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-info text-white rounded-pill fw-bold py-2 shadow transition-btn">
+                            SAVE TRACKING UPDATE <i class="fas fa-save ms-2"></i>
+                        </button>
+
+
+                        <!-- Back to List: Visible to everyone -->
+                        <a asp-action="Index" class="btn btn-light rounded-pill border py-2">
+                            <i class="fas fa-undo me-1"></i> Cancel & Back to List
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .transition-btn:hover {
+        transform: scale(1.02);
+        filter: brightness(1.1);
+    }
+</style>

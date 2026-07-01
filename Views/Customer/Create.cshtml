@@ -1,0 +1,89 @@
+﻿@model CourierManagementSystem.Models.Customer
+@{
+    Layout = "_Layout";
+}
+
+
+<div class="container mt-4 animate__animated animate__fadeInUp">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="glass-card p-5 shadow-lg border-0 bg-white rounded-4">
+                <h2 class="fw-bold text-primary mb-4 text-center">New Customer Entry</h2>
+                <form asp-action="Create" method="post">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="fw-bold small">Full Name</label>
+                            <input asp-for="Name" class="form-control rounded-pill border-primary p-3" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="fw-bold small text-primary">Phone Number (Starts 03...)</label>
+                            @* Added id, maxlength, and placeholder for 11 digits *@
+                            <input asp-for="PhoneNumber" id="PhoneNumber" class="form-control rounded-pill border-primary p-3"
+                                   placeholder="03XXXXXXXXX" maxlength="11" required />
+                            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="fw-bold small">Email</label>
+                            <input asp-for="Email" type="email" class="form-control rounded-pill border-primary p-3" required />
+                        </div>
+
+
+                        <h6 class="mt-4 text-muted border-bottom pb-2">Address (Global API)</h6>
+
+
+                        <div class="col-md-4">
+                            <label class="small fw-bold">Country</label>
+                            <select asp-for="Country" id="CountrySel" class="form-select rounded-pill border-success p-3" required></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="small fw-bold">Province</label>
+                            <select asp-for="Province" id="ProvinceSel" class="form-select rounded-pill border-success p-3" disabled required></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="small fw-bold">City</label>
+                            <select asp-for="City" id="CitySel" class="form-select rounded-pill border-success p-3" disabled required></select>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <label class="small fw-bold">Area</label>
+                            <input asp-for="Area" class="form-control rounded-pill p-3" placeholder="e.g. Gulberg" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="small fw-bold">Street Info</label>
+                            <input asp-for="Address" class="form-control rounded-pill p-3" placeholder="House #, Street #" required />
+                        </div>
+                    </div>
+                    <div class="mt-5 text-center">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow">SAVE CUSTOMER</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/addressApi.js"></script>
+    <script>
+        $(document).ready(function () {
+        // Logic to force 03XXXXXXXXX (11 digits)
+        $('#PhoneNumber').on('input', function () {
+        // Remove non-numeric characters
+        this.value = this.value.replace(/[^0-9]/g, '');
+
+
+        // Force first digit to be '0'
+        if (this.value.length > 0 && this.value[0] !== '0') {
+        this.value = '';
+        }
+        // Force second digit to be '3'
+        if (this.value.length > 1 && this.value[1] !== '3') {
+        this.value = '0';
+        }
+        });
+        });
+    </script>
+}

@@ -1,0 +1,87 @@
+﻿@model CourierManagementSystem.Models.Parcel
+
+
+@{
+    ViewData["Title"] = "Cancel Shipment";
+}
+
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f4f7f6;
+    }
+
+
+    .delete-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        padding: 30px;
+        margin-top: 50px;
+    }
+
+
+    .warning-box {
+        background-color: #fff3cd;
+        border-left: 5px solid #ffc107;
+        color: #664d03;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 25px;
+    }
+</style>
+
+
+<div class="container animate__animated animate__fadeIn">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="delete-card text-center">
+                <div class="text-danger mb-3">
+                    <i class="fas fa-box-open fa-4x animate__animated animate__pulse animate__infinite text-danger"></i>
+                </div>
+
+
+                <h3 class="fw-bold text-dark mb-1">Remove Consignment?</h3>
+                <p class="text-muted mb-4">Are you sure you want to delete this parcel record from the active dispatch manifest?</p>
+
+
+                <div class="warning-box text-start">
+                    <i class="fas fa-info-circle me-2"></i> <strong>Warning:</strong> Deleting this will completely drop tracking data and routing history associated with this ID.
+                </div>
+
+
+                <div class="card bg-light border-0 rounded-3 p-3 text-start mb-4">
+                    <div class="row mb-2">
+                        <div class="col-4 text-muted small fw-bold">TRACKING ID:</div>
+                        <div class="col-8 text-dark fw-bold"><code>@Model.TrackingNumber</code></div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-4 text-muted small fw-bold">RECEIVER:</div>
+                        <div class="col-8 text-dark">@Model.ReceiverName</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-4 text-muted small fw-bold">BILL AMOUNT:</div>
+                        <div class="col-8 text-success fw-bold">Rs. @Model.TotalCost</div>
+                    </div>
+                </div>
+
+
+                <form asp-controller="Parcel" asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <a href="/Parcel/Index" class="btn btn-light rounded-pill px-4 fw-bold me-md-2">
+                            <i class="fas fa-times me-1"></i> Discard
+                        </a>
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold shadow">
+                            <i class="fas fa-trash-alt me-1"></i> Delete Consignment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

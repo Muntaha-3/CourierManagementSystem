@@ -1,0 +1,205 @@
+﻿@model CourierManagementSystem.Models.Employee
+
+
+@{
+    ViewData["Title"] = "Edit Employee Profile";
+}
+
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f4f7f6;
+    }
+
+
+    .edit-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        padding: 30px;
+        margin-top: 30px;
+    }
+
+
+    .form-header {
+        background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+    }
+
+
+    .form-control:focus, .form-select:focus {
+        border-color: #2a5298;
+        box-shadow: 0 0 0 0.2rem rgba(42, 82, 152, 0.25);
+    }
+
+
+    .btn-save {
+        background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+        color: white;
+        border: none;
+        transition: all 0.3s;
+    }
+
+
+        .btn-save:hover {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+</style>
+
+
+<div class="container animate__animated animate__fadeIn">
+
+
+    <div class="mb-3">
+        <a href="/Employee/Index" class="btn btn-secondary rounded-pill px-4 shadow-sm">
+            <i class="fas fa-arrow-left me-2"></i> Back to List
+        </a>
+    </div>
+
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="edit-card">
+
+
+                <div class="form-header d-flex align-items-center">
+                    <div class="me-3">
+                        <i class="fas fa-user-edit fa-2x text-warning"></i>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold mb-0">Modify Employee Information</h4>
+                        <small class="text-white-50">Update details for the selected team member.</small>
+                    </div>
+                </div>
+
+
+                <form asp-controller="Employee" asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="Password" />
+
+
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label asp-for="Name" class="form-label fw-bold text-muted small">Full Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-user text-secondary"></i></span>
+                                <input asp-for="Name" class="form-control" placeholder="e.g. Zain Ahmed" />
+                            </div>
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label fw-bold text-muted small">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-envelope text-secondary"></i></span>
+                                <input asp-for="Email" type="email" class="form-control" placeholder="e.g. admin@courier.com" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <label asp-for="PhoneNumber" class="form-label fw-bold text-muted small">Phone Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-phone text-secondary"></i></span>
+                                <input asp-for="PhoneNumber" class="form-control" placeholder="e.g. 0321789990" />
+                            </div>
+                            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                        </div>
+
+
+                        <div class="col-md-12">
+                            <label asp-for="Role" class="form-label fw-bold text-muted small">Designation / Role</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-briefcase text-secondary"></i></span>
+                                <select asp-for="Role" class="form-select" id="roleSelect">
+                                    <option value="Admin">Admin</option>
+                                    <option value="Driver">Driver</option>
+                                    <option value="Worker">Worker</option>
+                                    <option value="Labour">Labour</option>
+                                </select>
+                            </div>
+                            <span asp-validation-for="Role" class="text-danger small"></span>
+                        </div>
+
+
+                        <div class="col-md-6 rider-field" style="display: none;">
+                            <label asp-for="VehicleNumber" class="form-label fw-bold text-muted small">Vehicle Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-motorcycle text-secondary"></i></span>
+                                <input asp-for="VehicleNumber" class="form-control" placeholder="e.g. LEN-10-444" />
+                            </div>
+                            <span asp-validation-for="VehicleNumber" class="text-danger small"></span>
+                        </div>
+
+
+                        <div class="col-md-6 rider-field" style="display: none;">
+                            <label asp-for="AssignedArea" class="form-label fw-bold text-muted small">Assigned Area</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-map-marked-alt text-secondary"></i></span>
+                                <input asp-for="AssignedArea" class="form-control" placeholder="e.g. Model Town" />
+                            </div>
+                            <span asp-validation-for="AssignedArea" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+
+                    <hr class="my-4 text-muted">
+
+
+                    <div class="d-flex justify-content-between">
+                        <button type="reset" class="btn btn-outline-secondary rounded-pill px-4">
+                            <i class="fas fa-undo me-1"></i> Reset Changes
+                        </button>
+                        <button type="submit" class="btn btn-save rounded-pill px-5 fw-bold shadow">
+                            <i class="fas fa-save me-1"></i> UPDATE EMPLOYEE
+                        </button>
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
+
+<script>
+    $(document).ready(function () {
+    // Toggles visibility of logistics fields depending on the designation context
+    function toggleRiderFields() {
+    if ($('#roleSelect').val() === 'Driver') {
+    $('.rider-field').fadeIn();
+    } else {
+    $('.rider-field').fadeOut();
+    }
+    }
+
+
+    // Run verification routine on initial DOM load initialization
+    toggleRiderFields();
+
+
+    // Bind handler to observe designation selection variations runtime
+    $('#roleSelect').change(function () {
+    toggleRiderFields();
+    });
+    });
+</script>

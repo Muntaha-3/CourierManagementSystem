@@ -1,0 +1,26 @@
+﻿@model CourierManagementSystem.Models.Invoice
+@{
+    Layout = "_Layout";
+}
+
+
+<div class="container mt-5 animate__animated animate__shakeX">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="glass-card p-5 shadow-lg border-top border-danger border-5 text-center">
+                <i class="fas fa-exclamation-triangle fa-4x text-danger mb-4"></i>
+                <h2 class="fw-bold">Delete Invoice?</h2>
+                <p class="text-muted">Are you sure you want to remove <strong>@Model.InvoiceNumber</strong>? This action cannot be undone.</p>
+
+
+                <form asp-action="Delete">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger btn-lg rounded-pill fw-bold">YES, DELETE PERMANENTLY</button>
+                        <a asp-action="Index" class="btn btn-light rounded-pill">No, Keep It</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

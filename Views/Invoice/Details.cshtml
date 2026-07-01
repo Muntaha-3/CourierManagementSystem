@@ -1,0 +1,184 @@
+﻿@model CourierManagementSystem.Models.Invoice
+@{
+    Layout = "_Layout";
+}
+
+
+<div class="container animate__animated animate__fadeInUp mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-3">
+            <i class="fas fa-arrow-left me-1"></i> Back
+        </a>
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-warning rounded-pill px-3 me-2">
+                <i class="fas fa-edit me-1"></i> Edit
+            </a>
+            <button onclick="window.print()" class="btn btn-primary rounded-pill px-4">
+                <i class="fas fa-print me-1"></i> Print / PDF
+            </button>
+        </div>
+    </div>
+
+
+    <!-- ══ PRINTABLE INVOICE ════════════════════════════════════════ -->
+    <div class="glass-card p-5 shadow-lg border-0 rounded-4" id="printArea">
+
+
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col-6">
+                <h3 class="fw-bold text-primary"><i class="fas fa-shipping-fast me-2"></i>COURIER<span class="text-warning">PRO</span></h3>
+                <p class="text-muted small mb-0">Courier Management System</p>
+                <p class="text-muted small">info@courierpro.pk | 0300-1234567</p>
+            </div>
+            <div class="col-6 text-end">
+                <h4 class="fw-bold text-uppercase text-muted">Invoice</h4>
+                <p class="mb-1"><strong>@Model.InvoiceNumber</strong></p>
+                <p class="small text-muted mb-0">Issue Date: @Model.IssueDate.ToString("dd MMM yyyy")</p>
+                <p class="small text-muted">Due Date: @Model.DueDate.ToString("dd MMM yyyy")</p>
+                @{
+                    var sc = Model.Status switch
+                    {
+                        CourierManagementSystem.Models.InvoiceStatus.Paid => "badge bg-success fs-6",
+                        CourierManagementSystem.Models.InvoiceStatus.Overdue => "badge bg-danger fs-6",
+                        CourierManagementSystem.Models.InvoiceStatus.Sent => "badge bg-info text-dark fs-6",
+                        CourierManagementSystem.Models.InvoiceStatus.Cancelled => "badge bg-secondary fs-6",
+                        _ => "badge bg-warning text-dark fs-6"
+                    };
+                }
+                <span class="@sc">@Model.Status</span>
+            </div>
+        </div>
+
+
+        <hr />
+
+
+        <!-- Bill To & Parcel -->
+        <div class="row mb-4">
+            <div class="col-6">
+                <h6 class="fw-bold text-muted text-uppercase small">Bill To</h6>
+                <p class="mb-0 fw-bold">@Model.Customer?.Name</p>
+                <p class="mb-0 text-muted small">@Model.Customer?.PhoneNumber</p>
+                <p class="mb-0 text-muted small">@Model.Customer?.Address</p>
+            </div>
+            <div class="col-6">
+                <h6 class="fw-bold text-muted text-uppercase small">Parcel Info</h6>
+                <p class="mb-0">Tracking: <strong>@Model.Parcel?.TrackingNumber</strong></p>
+                <p class="mb-0 text-muted small">Service: @Model.Parcel?.Service</p>
+                <p class="mb-0 text-muted small">Receiver: @Model.Parcel?.ReceiverName — @Model.Parcel?.ReceiverAddress</p>
+                <p class="mb-0 text-muted small">Payment: @Model.PaymentMethod</p>
+            </div>
+        </div>
+
+
+        <!-- Line Items -->
+        <table class="table table-bordered table-sm mb-3">
+            <thead class="table-light">
+                <tr>
+                    <th>Description</th>
+                    <th class="text-end">Amount (PKR)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Parcel Base Cost (@Model.Parcel?.Service Service, @Model.Parcel?.Weight kg)</td>
+                    <td class="text-end">@Model.ParcelBaseAmount.ToString("N2")</td>
+                </tr>
+                @if (Model.FuelSurcharge > 0)
+                {
+                    <tr>
+                        <td>Fuel Surcharge</td>
+                        <td class="text-end">@Model.FuelSurcharge.ToString("N2")</td>
+                    </tr>
+                }
+                @if (Model.RemoteAreaSurcharge > 0)
+                {
+                    <tr>
+                        <td>Remote Area Surcharge</td>
+                        <td class="text-end">@Model.RemoteAreaSurcharge.ToString("N2")</td>
+                    </tr>
+                }
+                @if (Model.InsuranceFee > 0)
+                {
+                    <tr>
+                        <td>Insurance Fee</td>
+                        <td class="text-end">@Model.InsuranceFee.ToString("N2")</td>
+                    </tr>
+                }
+                <tr class="fw-bold">
+                    <td>Sub Total</td>
+                    <td class="text-end">@Model.SubTotal.ToString("N2")</td>
+                </tr>
+                @if (Model.GstPercent > 0)
+                {
+                    <tr class="text-warning">
+                        <td>GST (@Model.GstPercent%)</td>
+                        <td class="text-end">+ @Model.GstAmount.ToString("N2")</td>
+                    </tr>
+                }
+                @if (Model.AdditionalTaxPercent > 0)
+                {
+                    <tr class="text-warning">
+                        <td>Additional Tax (@Model.AdditionalTaxPercent%)</td>
+                        <td class="text-end">+ @Model.AdditionalTaxAmount.ToString("N2")</td>
+                    </tr>
+                }
+                @if (Model.DiscountPercent > 0)
+                {
+                    <tr class="text-success">
+                        <td>Discount (@Model.DiscountPercent%)</td>
+                        <td class="text-end">- @Model.DiscountAmount.ToString("N2")</td>
+                    </tr>
+                }
+                @if (Model.GiftCodeDiscount > 0)
+                {
+                    <tr class="text-success">
+                        <td>Promo Code (@Model.GiftCode)</td>
+                        <td class="text-end">- @Model.GiftCodeDiscount.ToString("N2")</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr class="table-primary fw-bold fs-6">
+                    <td>GRAND TOTAL</td>
+                    <td class="text-end">PKR @Model.GrandTotal.ToString("N2")</td>
+                </tr>
+                <tr class="text-success">
+                    <td>Amount Paid</td>
+                    <td class="text-end">PKR @Model.AmountPaid.ToString("N2")</td>
+                </tr>
+                <tr class="@(Model.BalanceDue > 0 ? "text-danger fw-bold" : "text-success fw-bold")">
+                    <td>Balance Due</td>
+                    <td class="text-end">PKR @Model.BalanceDue.ToString("N2")</td>
+                </tr>
+            </tfoot>
+        </table>
+
+
+        @if (!string.IsNullOrWhiteSpace(Model.Notes))
+        {
+            <div class="alert alert-light border rounded-3 small">
+                <strong>Notes:</strong> @Model.Notes
+            </div>
+        }
+
+
+        <p class="text-muted small text-center mt-4">Thank you for choosing CourierPRO. For queries call 0300-1234567.</p>
+    </div>
+</div>
+
+
+@section Scripts {
+    <style>
+        @@media print {
+            nav, .d-flex.justify-content-between {
+                display: none !important;
+            }
+
+            #printArea {
+                box-shadow: none !important;
+            }
+        }
+    </style>
+}

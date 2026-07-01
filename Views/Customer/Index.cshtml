@@ -1,0 +1,96 @@
+﻿@model IEnumerable<CourierManagementSystem.Models.Customer>
+@{
+    Layout = "_Layout";
+}
+
+
+<div class="animate__animated animate__fadeIn p-4">
+
+
+    <div class="d-flex justify-content-between align-items-center mb-4 animate__animated animate__fadeInDown">
+        <a asp-controller="Dashboard" asp-action="Index" class="btn btn-secondary rounded-pill px-4 py-2 shadow-sm fw-bold">
+            <i class="fas fa-arrow-left me-2"></i> Back to Dashboard
+        </a>
+        <a asp-controller="Parcel" asp-action="Index" class="btn btn-success rounded-pill px-4 py-2 shadow-sm fw-bold">
+            Next to Parcels <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+    </div>
+
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary"><i class="fas fa-users-cog me-2"></i>Customer Management</h2>
+        <a asp-action="Create" class="btn btn-primary rounded-pill px-4 shadow">+ Add New Customer</a>
+    </div>
+
+
+
+
+    <div class="glass-card p-4 mb-4 shadow-sm border-0 animate__animated animate__fadeInDown">
+        <form method="get" asp-action="Index" class="row g-3 align-items-end">
+            <div class="col-md-5">
+                <label class="small fw-bold text-muted ps-2 mb-1">Search by Name / Email</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-primary border-end-0 rounded-start-pill"><i class="fas fa-search text-primary"></i></span>
+                    <input type="text" name="searchString" class="form-control border-primary border-start-0 rounded-end-pill" placeholder="e.g. Ali Khan" />
+                </div>
+            </div>
+            <div class="col-md-5">
+                <label class="small fw-bold text-success ps-2 mb-1">Search by Parcel Tracking ID</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-success border-end-0 rounded-start-pill"><i class="fas fa-barcode text-success"></i></span>
+                    <input type="text" name="trackingId" class="form-control border-success border-start-0 rounded-end-pill" placeholder="e.g. TRK-A1B2C3" />
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-dark w-100 rounded-pill fw-bold py-2 shadow-sm">FILTER</button>
+            </div>
+        </form>
+    </div>
+
+
+
+
+    <div class="glass-card p-0 shadow-sm overflow-hidden border-0">
+        <table class="table table-hover mb-0 text-center">
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th class="ps-4">Full Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="align-middle">
+                        <td class="ps-4 fw-bold">@item.Name</td>
+                        <td>@item.Email</td>
+                        <td>@item.PhoneNumber</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info rounded-pill px-3">
+                                <i class="fas fa-history me-1"></i> History
+                            </a>
+
+
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning rounded-circle ms-2" title="Edit Customer">
+                                <i class="fas fa-pencil-alt"></i>
+                            </a>
+
+
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger rounded-circle ms-2" onclick="return confirm('Delete this customer and all their records?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="4" class="py-5 text-muted">No customers found matching your search.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

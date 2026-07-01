@@ -1,0 +1,76 @@
+﻿@model CourierManagementSystem.Models.Customer
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Delete Customer";
+}
+
+
+<div class="container animate__animated animate__fadeIn mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg rounded-4 p-4 text-center">
+
+
+                <div class="text-danger mb-3">
+                    <i class="fas fa-user-slash fa-4x"></i>
+                </div>
+
+
+                <h4 class="fw-bold text-dark mb-1">Delete Customer?</h4>
+                <p class="text-muted small mb-3">
+                    This will permanently delete the customer and
+                    <strong>all their parcels and invoices</strong>.
+                    This cannot be undone.
+                </p>
+
+
+                <div class="alert alert-warning text-start rounded-3 mb-3">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Will also delete:</strong>
+                    <ul class="mb-0 mt-1">
+                        <li>@Model.BookedParcels.Count parcel(s)</li>
+                        <li>@Model.BookedParcels.Count(p => p.Invoice != null) invoice(s)</li>
+                    </ul>
+                </div>
+
+
+                
+                <div class="card bg-light border-0 rounded-3 p-3 text-start mb-4">
+                    <div class="row mb-2">
+                        <div class="col-5 text-muted small fw-bold">NAME:</div>
+                        <div class="col-7 fw-bold">@Model.Name</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-5 text-muted small fw-bold">EMAIL:</div>
+                        <div class="col-7">@Model.Email</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-5 text-muted small fw-bold">PHONE:</div>
+                        <div class="col-7">@Model.PhoneNumber</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-5 text-muted small fw-bold">ADDRESS:</div>
+                        <div class="col-7">@Model.Address</div>
+                    </div>
+                </div>
+
+
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+                    <div class="d-flex justify-content-center gap-3">
+                        <a asp-action="Index"
+                           class="btn btn-light rounded-pill px-4 fw-bold">
+                            <i class="fas fa-times me-1"></i> Cancel
+                        </a>
+                        <button type="submit"
+                                class="btn btn-danger rounded-pill px-4 fw-bold shadow">
+                            <i class="fas fa-trash-alt me-1"></i> Yes, Delete
+                        </button>
+                    </div>
+                </form>
+
+
+            </div>
+        </div>
+    </div>
+</div>

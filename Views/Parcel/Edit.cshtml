@@ -1,0 +1,184 @@
+﻿@model CourierManagementSystem.Models.Parcel
+
+
+@{
+    ViewData["Title"] = "Modify Shipment Info";
+}
+
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f4f7f6;
+    }
+
+
+    .edit-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        padding: 30px;
+        margin-top: 30px;
+    }
+
+
+    .form-header {
+        background: linear-gradient(135deg, #198754 0%, #115c36 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+    }
+
+
+    .form-control:focus, .form-select:focus {
+        border-color: #198754;
+        box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+    }
+
+
+    .btn-save {
+        background: linear-gradient(135deg, #198754 0%, #115c36 100%);
+        color: white;
+        border: none;
+        transition: all 0.3s;
+    }
+
+
+        .btn-save:hover {
+            background: linear-gradient(135deg, #115c36 0%, #198754 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+</style>
+
+
+<div class="container animate__animated animate__fadeIn">
+
+
+    <div class="mb-3">
+        <a href="/Parcel/Index" class="btn btn-secondary rounded-pill px-4 shadow-sm">
+            <i class="fas fa-arrow-left me-2"></i> Back to Logs
+        </a>
+    </div>
+
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="edit-card">
+
+
+                <div class="form-header d-flex align-items-center">
+                    <div class="me-3">
+                        <i class="fas fa-boxes fa-2x text-warning"></i>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold mb-0">Modify Shipment Details</h4>
+                        <small class="text-white-50">Update weight, status, or recipient data for order: @Model.TrackingNumber</small>
+                    </div>
+                </div>
+
+
+                <form asp-controller="Parcel" asp-action="Edit" method="post">
+                    @Html.AntiForgeryToken()
+
+
+                    <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+
+                    <input type="hidden" asp-for="Id" />
+                    <input type="hidden" asp-for="TrackingNumber" />
+                    <input type="hidden" asp-for="CustomerId" />
+                    <input type="hidden" asp-for="BookingDate" />
+                    <input type="hidden" asp-for="TotalCost" />
+
+
+                    <input type="hidden" asp-for="ReceiverAddress" />
+
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="ReceiverName" class="form-label fw-bold text-muted small">Receiver Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-user text-secondary"></i></span>
+                                <input asp-for="ReceiverName" class="form-control" />
+                            </div>
+                            <span asp-validation-for="ReceiverName" class="text-danger small"></span>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <label asp-for="ReceiverPhone" class="form-label fw-bold text-muted small">Receiver Phone</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-phone text-secondary"></i></span>
+                                <input asp-for="ReceiverPhone" class="form-control" />
+                            </div>
+                            <span asp-validation-for="ReceiverPhone" class="text-danger small"></span>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <label asp-for="Weight" class="form-label fw-bold text-muted small">Weight (Kg)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-weight-hanging text-secondary"></i></span>
+                                <input asp-for="Weight" type="number" step="0.1" class="form-control" />
+                            </div>
+                            <span asp-validation-for="Weight" class="text-danger small"></span>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <label asp-for="Service" class="form-label fw-bold text-muted small">Service Type</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-shipping-fast text-secondary"></i></span>
+                                <select asp-for="Service" class="form-select" asp-items="Html.GetEnumSelectList<CourierManagementSystem.Models.ServiceType>()"></select>
+                            </div>
+                            <span asp-validation-for="Service" class="text-danger small"></span>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <label asp-for="CurrentLocation" class="form-label fw-bold text-muted small">Current Hub Location</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-map-marker-alt text-secondary"></i></span>
+                                <input asp-for="CurrentLocation" class="form-control" />
+                            </div>
+                            <span asp-validation-for="CurrentLocation" class="text-danger small"></span>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <label asp-for="Status" class="form-label fw-bold text-muted small">Parcel Status</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="fas fa-info-circle text-secondary"></i></span>
+                                <select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<CourierManagementSystem.Models.ParcelStatus>()"></select>
+                            </div>
+                            <span asp-validation-for="Status" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+
+                    <hr class="my-4 text-muted">
+
+
+                    <div class="d-flex justify-content-between">
+                        <button type="reset" class="btn btn-outline-secondary rounded-pill px-4">
+                            <i class="fas fa-undo me-1"></i> Reset Changes
+                        </button>
+                        <button type="submit" class="btn btn-save rounded-pill px-5 fw-bold shadow">
+                            <i class="fas fa-save me-1"></i> UPDATE SHIPMENT
+                        </button>
+                    </div>
+
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
