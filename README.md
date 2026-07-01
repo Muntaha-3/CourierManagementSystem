@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🚚 Courier Management System
+# Courier Management System
 
 ### A web-based courier &amp; parcel tracking system built with ASP.NET Core MVC
 
@@ -17,15 +17,15 @@
 
 **Courier Management System** is a full-stack web application developed using **ASP.NET Core MVC**, designed to streamline the process of booking, tracking, and managing courier parcels. The system allows admins to manage customers, parcels, and deliveries through a clean and organized dashboard, built as part of coursework at the **Institute of Data Science, UET Lahore**.
 
-## ✨ Features
+##  Features
 
-- 📦 Parcel booking and management
-- 🔍 Real-time parcel tracking by tracking ID
-- 👤 Customer registration and management
-- 🔐 Secure admin login and authentication
-- 📊 Dashboard with delivery statistics
-- 🗂️ Organized MVC architecture (Controllers, Models, Views)
-- 💾 Database integration using Entity Framework Core
+-  Parcel booking and management
+-  Real-time parcel tracking by tracking ID
+-  Customer registration and management
+-  Secure admin login and authentication
+-  Dashboard with delivery statistics
+-  Organized MVC architecture (Controllers, Models, Views)
+-  Database integration using Entity Framework Core
 
 ---
 
@@ -41,7 +41,7 @@
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 CourierManagementSystem/
@@ -59,7 +59,7 @@ CourierManagementSystem/
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 - Visual Studio 2022 (or later)
@@ -94,7 +94,7 @@ CourierManagementSystem/
 
 ---
 
-## 👥 Contributors
+##  Contributors
 
 | Name | GitHub |
 |------|--------|
@@ -110,6 +110,6 @@ This project was developed for academic purposes at the **Institute of Data Scie
 
 <div align="center">
 
-⭐ If you found this project helpful, consider giving it a star!
+ If you found this project helpful, consider giving it a star!
 
 </div>
