@@ -13,7 +13,7 @@
 
 ---
 
-## 📖 About The Project
+##  About The Project
 
 **Courier Management System** is a full-stack web application developed using **ASP.NET Core MVC**, designed to streamline the process of booking, tracking, and managing courier parcels. The system allows admins to manage customers, parcels, and deliveries through a clean and organized dashboard, built as part of coursework at the **Institute of Data Science, UET Lahore**.
 
@@ -29,7 +29,7 @@
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Layer | Technology |
 |-------|------------|
@@ -102,7 +102,7 @@ CourierManagementSystem/
 
 ---
 
-## 📄 License
+##  License
 
 This project was developed for academic purposes at the **Institute of Data Science (IDS), University of Engineering and Technology (UET), Lahore**.
 
