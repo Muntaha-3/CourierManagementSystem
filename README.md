@@ -58,7 +58,76 @@ CourierManagementSystem/
 ```
 
 ---
+##  Database Design (ERD)
 
+```mermaid
+erDiagram
+    PERSONS ||--o| ADMINS : "is a"
+    PERSONS ||--o| CUSTOMERS : "is a"
+    PERSONS ||--o| EMPLOYEES : "is a"
+    CUSTOMERS ||--o{ PARCELS : books
+    EMPLOYEES |o--o{ PARCELS : handles
+    PARCELS ||--o| INVOICES : generates
+    CUSTOMERS ||--o{ INVOICES : receives
+
+    PERSONS {
+        int Id PK
+        string Name
+        string Email
+        string PhoneNumber
+    }
+
+    ADMINS {
+        int Id PK
+        string Password
+    }
+
+    CUSTOMERS {
+        int Id PK
+        string Address
+    }
+
+    EMPLOYEES {
+        int Id PK
+        string Role
+        string VehicleNumber
+        string AssignedArea
+        string Password
+        bool IsActive
+    }
+
+    PARCELS {
+        int Id PK
+        string TrackingNumber
+        int CustomerId FK
+        int EmployeeId FK
+        string ReceiverName
+        string ReceiverPhone
+        string ReceiverAddress
+        double Weight
+        string Service
+        decimal TotalCost
+        string Status
+        string CurrentLocation
+        datetime BookingDate
+    }
+
+    INVOICES {
+        int Id PK
+        string InvoiceNumber
+        int ParcelId FK
+        int CustomerId FK
+        decimal GrandTotal
+        decimal GstAmount
+        decimal FuelSurcharge
+        decimal DiscountAmount
+        decimal BalanceDue
+        string Status
+        string PaymentMethod
+        datetime IssueDate
+        datetime DueDate
+    }
+```
 ##  Getting Started
 
 ### Prerequisites
