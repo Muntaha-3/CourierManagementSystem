@@ -94,12 +94,13 @@ CourierManagementSystem/
 
 ---
 
-##  Contributors
+## Contributors
 
 | Name | GitHub |
 |------|--------|
-| Muntaha | [@Muntaha-3](https://github.com/Muntaha-3) |
-
+| Sidratul Muntaha | [@Muntaha-3](https://github.com/Muntaha-3) |
+| Husain Malik | [@husainmalic](https://github.com/husainmalic) |
+| Muhammad Asaam | [@asaamali0123](https://github.com/asaamali0123) |
 ---
 
 ##  License
